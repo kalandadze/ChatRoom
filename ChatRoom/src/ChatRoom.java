@@ -27,26 +27,33 @@ public class ChatRoom  {
         new Thread(()->{
             while (true){
                 Socket socket;
+                User user;
                 try {
                     socket = server.accept();
+                    user=new User(socket);
+                    user.setUsername(new DataInputStream(socket.getInputStream()).readUTF());
+                    receive(user.getUsername()+" joined the chat",socket);
                     System.out.println("User " + socket.getInetAddress().getHostName() + " established connection");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                User user=new User(socket);
                 users.add(user);
                 user.start();
             }
         }).start();
     }
 
-    public void receive(String text,Socket sender) throws IOException {
+    public static void receive(String text,Socket sender) throws IOException {
         for (User user:users){
             if (user.getSocket()!=sender){
                 user.send(text);
             }
         }
     }
+    public static void removeUser(User user){
+        users.remove(user);
+    }
+
 
 }
