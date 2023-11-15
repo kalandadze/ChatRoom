@@ -51,9 +51,15 @@ public class ChatRoom  {
             }
         }
     }
+    public static void sendPrivately(String text,User sender,User receiver) throws IOException {
+        receiver.send(sender.getUsername()+": "+text+" (private)");
+    }
+
     public static void removeUser(User user){
         users.remove(user);
     }
 
-
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
 }
