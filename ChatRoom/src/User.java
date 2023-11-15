@@ -47,7 +47,15 @@ public class User extends Thread{
         setUsername(input.readUTF());
         ChatRoom.receive(oldUsername + " changed his username to "+ username,socket);
     }
-    public void privateMessage(){}
+    public void privateMessage() throws IOException {
+        for (int i=0;i<ChatRoom.getUsers().size();i++){
+            send((i+1)+". "+ChatRoom.getUsers().get(i).getUsername());
+        }
+        send("enter id of who you want to message");
+        int a=Integer.parseInt(input.readUTF());
+        send("type the private message");
+        ChatRoom.sendPrivately(input.readUTF(),this,ChatRoom.getUsers().get(a-1));
+    }
     @Override
     public void run() {
         while (!isInterrupted()) {
@@ -60,7 +68,7 @@ public class User extends Thread{
                             try {
                                 send(" \n=====================================================\n"+
                                             username+
-                                            "\ntype \"1\" to message someone privately\n"+
+                                            "\ntype \"1\" to send private message to someone\n"+
                                             "type \"2\" to change nickname\n"+
                                             "type \"3\" to continue messaging\n"+
                                             "type \"4\" to exit programme\n"+
@@ -78,7 +86,11 @@ public class User extends Thread{
                             }
                             switch (a){
                                 case "1":
-                                    privateMessage();
+                                    try {
+                                        privateMessage();
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     break;
                                 case "2":
                                     try {
