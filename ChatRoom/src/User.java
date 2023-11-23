@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class User extends Thread{
     DataInputStream input;
@@ -125,8 +126,15 @@ public class User extends Thread{
                     });
                     help.start();
                     help.join();
-                }else {
+                }else if(!inp.equals("")) {
                     ChatRoom.receive(username+": "+inp, socket);
+                }
+            } catch (SocketException e){
+                try {
+                    exit();
+                    break;
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
